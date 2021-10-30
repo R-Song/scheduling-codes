@@ -1,4 +1,4 @@
-noinst_PROGRAMS = vector_adapter_ex1 file_adapter_ex2 struct_vector_adapter_ex3 small_set_ex4
+noinst_PROGRAMS = vector_adapter_ex1 file_adapter_ex2 struct_vector_adapter_ex3 small_set_ex4 nack_scheduling
 
 AM_CPPFLAGS = -I../src/
 
@@ -13,3 +13,6 @@ struct_vector_adapter_ex3_SOURCES   = struct_vector_adapter_ex3.c
 
 small_set_ex4_LDADD     = ../src/libcmph.la
 small_set_ex4_SOURCES   = small_set_ex4.c
+
+nack_scheduling_LDADD     = ../src/libcmph.la
+nack_scheduling_SOURCES   = nack_scheduling.c

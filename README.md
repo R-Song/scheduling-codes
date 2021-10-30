@@ -2,6 +2,21 @@
 
 Perfect hash function for scheduling with negative feedback
 
+To compile the files you'll need a specific version of automake. Follow the following instructions.
+
+```
+wget http://ftp.gnu.org/gnu/automake/automake-1.16.1.tar.gz
+tar xvfz automake-1.16.tar.gz
+cd automake-1.16
+./configure --prefix=/usr/local/automake/1_16_1
+make
+make install
+
+ln -s /usr/local/automake/1_16_1/bin/aclocal /usr/local/bin/
+ln -s /usr/local/automake/1_16_1/bin/aclocal-1.16 /usr/local/bin/
+ln -s /usr/local/automake/1_16_1/bin/automake /usr/local/bin/
+ln -s /usr/local/automake/1_16_1/bin/automake-1.16 /usr/local/bin/
+```
 
 # CMPH Authors
 
