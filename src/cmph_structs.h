@@ -10,7 +10,8 @@ struct __config_t
         CMPH_ALGO algo;
         cmph_io_adapter_t *key_source;
         cmph_uint32 verbosity;
-        double c;
+        double c;   // load factor
+        double a;   // skew factor (for nack)
         void *data; // algorithm dependent data
 };
 

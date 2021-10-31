@@ -25,6 +25,7 @@ int test(cmph_uint32* items_to_hash, cmph_uint32 items_len, CMPH_ALGO alg_n)
     config = cmph_config_new(source);
     cmph_config_set_algo(config, alg_n);
     cmph_config_set_graphsize(config, 5.00);
+    cmph_config_set_skew(config, 1.20);
     cmph_config_set_verbosity(config, 1);
 
     if (alg_n == CMPH_BRZ) {
@@ -72,9 +73,9 @@ int main (void)
         T[nack[i]] = 1;
     }
 
-    printf("CHDN: %u ACTIVE, %u NACKS, %u TOTAL\n", active_len, nack_len, total_users);
+    printf("CHD_N: %u ACTIVE, %u NACKS, %u TOTAL\n", active_len, nack_len, total_users);
     // TODO: Actually implement that algorithm...
-    test(active, active_len, CMPH_CHD);
+    test(active, active_len, CMPH_CHD_N);
 
     return 0;
 }

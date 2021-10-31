@@ -145,7 +145,7 @@ am_libcmph_la_OBJECTS = hash.lo jenkins_hash.lo vstack.lo vqueue.lo \
 	bdz_ph.lo brz.lo fch.lo fch_buckets.lo chd.lo chd_ph.lo \
 	miller_rabin.lo buffer_manager.lo buffer_entry.lo select.lo \
 	compressed_seq.lo compressed_rank.lo linear_string_map.lo \
-	cmph_benchmark.lo
+	cmph_benchmark.lo chd_n.lo
 libcmph_la_OBJECTS = $(am_libcmph_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -179,7 +179,8 @@ am__depfiles_remade = ./$(DEPDIR)/bdz.Plo ./$(DEPDIR)/bdz_ph.Plo \
 	./$(DEPDIR)/bm_numbers.Po ./$(DEPDIR)/bmz.Plo \
 	./$(DEPDIR)/bmz8.Plo ./$(DEPDIR)/brz.Plo \
 	./$(DEPDIR)/buffer_entry.Plo ./$(DEPDIR)/buffer_manager.Plo \
-	./$(DEPDIR)/chd.Plo ./$(DEPDIR)/chd_ph.Plo ./$(DEPDIR)/chm.Plo \
+	./$(DEPDIR)/chd.Plo ./$(DEPDIR)/chd_n.Plo \
+	./$(DEPDIR)/chd_ph.Plo ./$(DEPDIR)/chm.Plo \
 	./$(DEPDIR)/cmph.Plo ./$(DEPDIR)/cmph_benchmark.Plo \
 	./$(DEPDIR)/cmph_structs.Plo ./$(DEPDIR)/compressed_rank.Plo \
 	./$(DEPDIR)/compressed_seq.Plo ./$(DEPDIR)/fch.Plo \
@@ -355,6 +356,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -387,9 +389,10 @@ libcmph_la_SOURCES = hash.h hash.c \
 		      select.h select.c select_lookup_tables.h \
 		      compressed_seq.h compressed_seq.c \
 		      compressed_rank.h compressed_rank.c \
-                      linear_string_map.h linear_string_map.c \
+              linear_string_map.h linear_string_map.c \
 		      cmph_benchmark.h cmph_benchmark.c \
-		      cmph_time.h
+		      cmph_time.h \
+			  chd_n.h chd_n.c chd_structs_n.h
 
 libcmph_la_LDFLAGS = -version-info 0:0:0
 cmph_SOURCES = main.c wingetopt.h wingetopt.c
@@ -549,6 +552,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer_entry.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer_manager.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chd.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chd_n.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chd_ph.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chm.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmph.Plo@am__quote@ # am--include-marker
@@ -762,6 +766,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/buffer_entry.Plo
 	-rm -f ./$(DEPDIR)/buffer_manager.Plo
 	-rm -f ./$(DEPDIR)/chd.Plo
+	-rm -f ./$(DEPDIR)/chd_n.Plo
 	-rm -f ./$(DEPDIR)/chd_ph.Plo
 	-rm -f ./$(DEPDIR)/chm.Plo
 	-rm -f ./$(DEPDIR)/cmph.Plo
@@ -835,6 +840,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/buffer_entry.Plo
 	-rm -f ./$(DEPDIR)/buffer_manager.Plo
 	-rm -f ./$(DEPDIR)/chd.Plo
+	-rm -f ./$(DEPDIR)/chd_n.Plo
 	-rm -f ./$(DEPDIR)/chd_ph.Plo
 	-rm -f ./$(DEPDIR)/chm.Plo
 	-rm -f ./$(DEPDIR)/cmph.Plo

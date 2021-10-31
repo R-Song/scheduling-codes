@@ -90,7 +90,7 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = vector_adapter_ex1$(EXEEXT) \
 	file_adapter_ex2$(EXEEXT) struct_vector_adapter_ex3$(EXEEXT) \
-	small_set_ex4$(EXEEXT)
+	small_set_ex4$(EXEEXT) nack_scheduling$(EXEEXT)
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acinclude.m4 \
@@ -114,6 +114,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_nack_scheduling_OBJECTS = nack_scheduling.$(OBJEXT)
+nack_scheduling_OBJECTS = $(am_nack_scheduling_OBJECTS)
+nack_scheduling_DEPENDENCIES = ../src/libcmph.la
 am_small_set_ex4_OBJECTS = small_set_ex4.$(OBJEXT)
 small_set_ex4_OBJECTS = $(am_small_set_ex4_OBJECTS)
 small_set_ex4_DEPENDENCIES = ../src/libcmph.la
@@ -141,7 +144,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/file_adapter_ex2.Po \
-	./$(DEPDIR)/small_set_ex4.Po \
+	./$(DEPDIR)/nack_scheduling.Po ./$(DEPDIR)/small_set_ex4.Po \
 	./$(DEPDIR)/struct_vector_adapter_ex3.Po \
 	./$(DEPDIR)/vector_adapter_ex1.Po
 am__mv = mv -f
@@ -163,11 +166,11 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(file_adapter_ex2_SOURCES) $(small_set_ex4_SOURCES) \
-	$(struct_vector_adapter_ex3_SOURCES) \
+SOURCES = $(file_adapter_ex2_SOURCES) $(nack_scheduling_SOURCES) \
+	$(small_set_ex4_SOURCES) $(struct_vector_adapter_ex3_SOURCES) \
 	$(vector_adapter_ex1_SOURCES)
-DIST_SOURCES = $(file_adapter_ex2_SOURCES) $(small_set_ex4_SOURCES) \
-	$(struct_vector_adapter_ex3_SOURCES) \
+DIST_SOURCES = $(file_adapter_ex2_SOURCES) $(nack_scheduling_SOURCES) \
+	$(small_set_ex4_SOURCES) $(struct_vector_adapter_ex3_SOURCES) \
 	$(vector_adapter_ex1_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -312,6 +315,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -329,6 +333,8 @@ struct_vector_adapter_ex3_LDADD = ../src/libcmph.la
 struct_vector_adapter_ex3_SOURCES = struct_vector_adapter_ex3.c
 small_set_ex4_LDADD = ../src/libcmph.la
 small_set_ex4_SOURCES = small_set_ex4.c
+nack_scheduling_LDADD = ../src/libcmph.la
+nack_scheduling_SOURCES = nack_scheduling.c
 all: all-am
 
 .SUFFIXES:
@@ -376,6 +382,10 @@ file_adapter_ex2$(EXEEXT): $(file_adapter_ex2_OBJECTS) $(file_adapter_ex2_DEPEND
 	@rm -f file_adapter_ex2$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(file_adapter_ex2_OBJECTS) $(file_adapter_ex2_LDADD) $(LIBS)
 
+nack_scheduling$(EXEEXT): $(nack_scheduling_OBJECTS) $(nack_scheduling_DEPENDENCIES) $(EXTRA_nack_scheduling_DEPENDENCIES) 
+	@rm -f nack_scheduling$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(nack_scheduling_OBJECTS) $(nack_scheduling_LDADD) $(LIBS)
+
 small_set_ex4$(EXEEXT): $(small_set_ex4_OBJECTS) $(small_set_ex4_DEPENDENCIES) $(EXTRA_small_set_ex4_DEPENDENCIES) 
 	@rm -f small_set_ex4$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(small_set_ex4_OBJECTS) $(small_set_ex4_LDADD) $(LIBS)
@@ -395,6 +405,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_adapter_ex2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nack_scheduling.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/small_set_ex4.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/struct_vector_adapter_ex3.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vector_adapter_ex1.Po@am__quote@ # am--include-marker
@@ -558,6 +569,7 @@ clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/file_adapter_ex2.Po
+	-rm -f ./$(DEPDIR)/nack_scheduling.Po
 	-rm -f ./$(DEPDIR)/small_set_ex4.Po
 	-rm -f ./$(DEPDIR)/struct_vector_adapter_ex3.Po
 	-rm -f ./$(DEPDIR)/vector_adapter_ex1.Po
@@ -607,6 +619,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/file_adapter_ex2.Po
+	-rm -f ./$(DEPDIR)/nack_scheduling.Po
 	-rm -f ./$(DEPDIR)/small_set_ex4.Po
 	-rm -f ./$(DEPDIR)/struct_vector_adapter_ex3.Po
 	-rm -f ./$(DEPDIR)/vector_adapter_ex1.Po
