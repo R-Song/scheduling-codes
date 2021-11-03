@@ -9,7 +9,7 @@
 #include "bdz_ph.h"
 #include "chd_ph.h"
 #include "chd.h"
-#include "chd_n.h"
+#include "chd_ph_n.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -17,7 +17,7 @@
 // #define DEBUG
 #include "debug.h"
 
-const char *cmph_names[] = {"bmz", "bmz8", "chm", "brz", "fch", "bdz", "bdz_ph", "chd_ph", "chd", "chd_n", NULL };
+const char *cmph_names[] = {"bmz", "bmz8", "chm", "brz", "fch", "bdz", "bdz_ph", "chd_ph", "chd", "chd_ph_n", NULL };
 
 typedef struct
 {
@@ -338,8 +338,8 @@ void cmph_config_set_algo(cmph_config_t *mph, CMPH_ALGO algo)
 			case CMPH_CHD:
 				chd_config_destroy(mph);
 				break;
-			case CMPH_CHD_N:
-				chd_n_config_destroy(mph);
+			case CMPH_CHD_PH_N:
+				chd_ph_n_config_destroy(mph);
 				break;
 			default:
 				assert(0);
@@ -373,8 +373,8 @@ void cmph_config_set_algo(cmph_config_t *mph, CMPH_ALGO algo)
 			case CMPH_CHD:
 				mph->data = chd_config_new(mph);
 				break;
-			case CMPH_CHD_N:
-				mph->data = chd_n_config_new(mph);
+			case CMPH_CHD_PH_N:
+				mph->data = chd_ph_n_config_new();
 				break;
 			default:
 				assert(0);
@@ -418,9 +418,9 @@ void cmph_config_set_b(cmph_config_t *mph, cmph_uint32 b)
 	{
 		chd_config_set_b(mph, b);
 	}
-	else if (mph->algo == CMPH_CHD_N)
+	else if (mph->algo == CMPH_CHD_PH_N)
 	{
-		chd_n_config_set_b(mph, b);
+		chd_ph_n_config_set_b(mph, b);
 	}
 }
 
@@ -434,9 +434,9 @@ void cmph_config_set_keys_per_bin(cmph_config_t *mph, cmph_uint32 keys_per_bin)
 	{
 		chd_config_set_keys_per_bin(mph, keys_per_bin);
 	}
-	else if (mph->algo == CMPH_CHD_N)
+	else if (mph->algo == CMPH_CHD_PH_N)
 	{
-		chd_n_config_set_keys_per_bin(mph, keys_per_bin);
+		chd_ph_n_config_set_keys_per_bin(mph, keys_per_bin);
 	}
 }
 
@@ -482,8 +482,8 @@ void cmph_config_destroy(cmph_config_t *mph)
 			case CMPH_CHD: /* included -- Fabiano */
 				chd_config_destroy(mph);
 				break;
-			case CMPH_CHD_N:
-				chd_n_config_destroy(mph);
+			case CMPH_CHD_PH_N:
+				chd_ph_n_config_destroy(mph);
 				break;
 			default:
 				assert(0);
@@ -528,8 +528,8 @@ void cmph_config_set_hashfuncs(cmph_config_t *mph, CMPH_HASH *hashfuncs)
 		case CMPH_CHD: /* included -- Fabiano */
 			chd_config_set_hashfuncs(mph, hashfuncs);
 			break;
-		case CMPH_CHD_N:
-			chd_n_config_set_hashfuncs(mph, hashfuncs);
+		case CMPH_CHD_PH_N:
+			chd_ph_n_config_set_hashfuncs(mph, hashfuncs);
 			break;
 		default:
 			break;
@@ -547,6 +547,13 @@ void cmph_config_set_skew(cmph_config_t *mph, double a)
 	mph->a = a;
 	return;
 }
+
+void cmph_config_set_nack(cmph_config_t *mph, cmph_uint32 nack)
+{
+	mph->nack = nack;
+	return;
+}
+
 
 cmph_t *cmph_new(cmph_config_t *mph)
 {
@@ -595,9 +602,9 @@ cmph_t *cmph_new(cmph_config_t *mph)
 			DEBUGP("Creating chd hash\n");
 			mphf = chd_new(mph, c);
 			break;
-		case CMPH_CHD_N:
-			DEBUGP("Creating chd_n hash\n");
-			mphf = chd_n_new(mph, c, a);
+		case CMPH_CHD_PH_N:
+			DEBUGP("Creating chd_ph_n hash\n");
+			mphf = chd_ph_n_new(mph, c, a);
 			break;
 		default:
 			assert(0);
@@ -627,8 +634,8 @@ int cmph_dump(cmph_t *mphf, FILE *f)
 			return chd_ph_dump(mphf, f);
 		case CMPH_CHD: /* included -- Fabiano */
 			return chd_dump(mphf, f);
-		case CMPH_CHD_N:
-			return chd_n_dump(mphf, f);
+		case CMPH_CHD_PH_N:
+			return chd_ph_n_dump(mphf, f);
 		default:
 			assert(0);
 	}
@@ -680,8 +687,8 @@ cmph_t *cmph_load(FILE *f)
 			DEBUGP("Loading chd algorithm dependent parts\n");
 			chd_load(f, mphf);
 			break;
-		case CMPH_CHD_N:
-			DEBUGP("Loading chd_n algorithm dependent parts\n");
+		case CMPH_CHD_PH_N:
+			DEBUGP("Loading chd_ph_n algorithm dependent parts\n");
 			chd_load(f, mphf);
 			break;
 		default:
@@ -723,9 +730,9 @@ cmph_uint32 cmph_search(cmph_t *mphf, const char *key, cmph_uint32 keylen)
 		case CMPH_CHD: /* included -- Fabiano */
 		        DEBUGP("chd algorithm search\n");
 		        return chd_search(mphf, key, keylen);
-		case CMPH_CHD_N: 
-		        DEBUGP("chd_n algorithm search\n");
-		        return chd_n_search(mphf, key, keylen);
+		case CMPH_CHD_PH_N: 
+		        DEBUGP("chd_ph_n algorithm search\n");
+		        return chd_ph_n_search(mphf, key, keylen);
 		default:
 			assert(0);
 	}
@@ -769,8 +776,8 @@ void cmph_destroy(cmph_t *mphf)
 		case CMPH_CHD: /* included -- Fabiano */
 			chd_destroy(mphf);
 			return;
-		case CMPH_CHD_N:
-			chd_n_destroy(mphf);
+		case CMPH_CHD_PH_N:
+			chd_ph_n_destroy(mphf);
 			return;
 		default:
 			assert(0);
@@ -820,8 +827,8 @@ void cmph_pack(cmph_t *mphf, void *packed_mphf)
 		case CMPH_CHD: /* included -- Fabiano */
 			chd_pack(mphf, ptr);
 			break;
-		case CMPH_CHD_N:
-			chd_n_pack(mphf, ptr);
+		case CMPH_CHD_PH_N:
+			chd_ph_n_pack(mphf, ptr);
 			break;
 		default:
 			assert(0);
@@ -856,8 +863,8 @@ cmph_uint32 cmph_packed_size(cmph_t *mphf)
 			return chd_ph_packed_size(mphf);
 		case CMPH_CHD: /* included -- Fabiano */
 			return chd_packed_size(mphf);
-		case CMPH_CHD_N:
-			return chd_n_packed_size(mphf);
+		case CMPH_CHD_PH_N:
+			return chd_ph_n_packed_size(mphf);
 		default:
 			assert(0);
 	}
@@ -895,8 +902,8 @@ cmph_uint32 cmph_search_packed(void *packed_mphf, const char *key, cmph_uint32 k
 			return chd_ph_search_packed(++ptr, key, keylen);
 		case CMPH_CHD: /* included -- Fabiano */
 			return chd_search_packed(++ptr, key, keylen);
-		case CMPH_CHD_N:
-			return chd_n_search_packed(++ptr, key, keylen);
+		case CMPH_CHD_PH_N:
+			return chd_ph_n_search_packed(++ptr, key, keylen);
 		default:
 			assert(0);
 	}

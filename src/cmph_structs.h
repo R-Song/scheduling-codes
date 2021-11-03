@@ -12,6 +12,7 @@ struct __config_t
         cmph_uint32 verbosity;
         double c;   // load factor
         double a;   // skew factor (for nack)
+        cmph_uint32 nack; // number of nack keys
         void *data; // algorithm dependent data
 };
 
