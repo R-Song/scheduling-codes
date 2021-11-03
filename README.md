@@ -1,10 +1,18 @@
 # NackHash
 
-Perfect hash function for scheduling with negative feedback
-
-To compile the files you'll need a specific version of automake. Follow the following instructions.
+Perfect hash function for scheduling with negative feedback. This project is built off of CMPH, so all the credit to CMPH and the authors of the Compressed Hash Displace (CHD) algorithm. Modifications to the CHD algorithm were made to support negative feedback. Relevant source files are:
 
 ```
+src/chd_ph_n.c
+src/chd_ph_n.h
+src/chd_structs_ph_n.h
+examples/nack_scheduling.c
+```
+
+To compile the project you will need a specific version of automake. Follow the following instructions to install.
+
+```
+cd ~
 wget http://ftp.gnu.org/gnu/automake/automake-1.16.1.tar.gz
 tar xvfz automake-1.16.tar.gz
 cd automake-1.16
@@ -18,17 +26,21 @@ ln -s /usr/local/automake/1_16_1/bin/automake /usr/local/bin/
 ln -s /usr/local/automake/1_16_1/bin/automake-1.16 /usr/local/bin/
 ```
 
-# CMPH Authors
+-----------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+
+# CMPH README
+
+CMPH - C Minimal Perfect Hashing Library
+
+
+# Authors
 
 Davi de Castro Reis davi@users.sourceforge.net
 Djamel Belazzougui db8192@users.sourceforge.net
 Fabiano Cupertino Botelho fc_botelho@users.sourceforge.net
 Nivio Ziviani nivio@dcc.ufmg.br
-
-
-# CMPH README
-
-CMPH - C Minimal Perfect Hashing Library
 
 
 ## Motivation
