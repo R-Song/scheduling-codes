@@ -5,8 +5,8 @@
 
 #include <cmph.h>
 
-/* Run a particular hash algorithm */
-int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_len, double skew, CMPH_ALGO alg_n)
+/* Test the nackhash */
+int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_len, double skew)
 {
     cmph_t *hash;
     cmph_config_t *config;
@@ -15,6 +15,7 @@ int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_le
     FILE* mphf_fd = NULL;
     cmph_uint32 items_len = active_len + nack_len;
 
+    // Wrap keys
     source = cmph_io_struct_vector_adapter(
         items_to_hash,
         (cmph_uint32)sizeof(cmph_uint32),
@@ -23,29 +24,51 @@ int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_le
         items_len
     );
 
+    // Set up config
     config = cmph_config_new(source);
-    cmph_config_set_algo(config, alg_n);
+    cmph_config_set_algo(config, CMPH_CHD_PH_N);
     cmph_config_set_graphsize(config, 0.99);
     cmph_config_set_skew(config, skew);
     cmph_config_set_nack(config, nack_len);
-    cmph_config_set_verbosity(config, 1);
+    cmph_config_set_verbosity(config, 0);
 
-    if (alg_n == CMPH_BRZ) {
-        sprintf(filename, "%s_%u.mph", cmph_names[alg_n], items_len);
-        mphf_fd = fopen(filename, "w");
-        cmph_config_set_mphf_fd(config, mphf_fd);
-    }
+    // Create perfect hash
     hash = cmph_new(config);
     cmph_config_destroy(config);
-
     printf("Packed Size: %u bytes for %u keys\n",cmph_packed_size(hash), items_len);
-
     cmph_io_vector_adapter_destroy(source);   
     cmph_destroy(hash);
+    return 0;
+}
 
-    if (alg_n == CMPH_BRZ) {
-        fclose(mphf_fd);
-    }
+int test_no_nack(cmph_uint32* items_to_hash, cmph_uint32 items_len) {
+    cmph_t *hash;
+    cmph_config_t *config;
+    cmph_io_adapter_t *source;
+    char filename[256];
+    FILE* mphf_fd = NULL;
+
+    // Wrap keys
+    source = cmph_io_struct_vector_adapter(
+        items_to_hash,
+        (cmph_uint32)sizeof(cmph_uint32),
+        0,
+        (cmph_uint32)sizeof(cmph_uint32),
+        items_len
+    );
+
+    // Set up config
+    config = cmph_config_new(source);
+    cmph_config_set_algo(config, CMPH_CHD_PH);
+    cmph_config_set_graphsize(config, 0.99);
+    cmph_config_set_verbosity(config, 0);
+
+    // Create perfect hash
+    hash = cmph_new(config);
+    cmph_config_destroy(config);
+    printf("Packed Size: %u bytes for %u keys\n",cmph_packed_size(hash), items_len);
+    cmph_io_vector_adapter_destroy(source);   
+    cmph_destroy(hash);
     return 0;
 }
 
@@ -55,7 +78,7 @@ int main (void)
     cmph_uint32 active_len = 1000;
     cmph_uint32 nack_len = 1000;
     cmph_uint32 keys[active_len + nack_len];
-    double skew = 0.1;
+    double skew[12] = {0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6};
 
     // Generate random vector of active users
     cmph_uint32 i;
@@ -68,9 +91,17 @@ int main (void)
         T[keys[i]] = 1;
     }
 
-    printf("CHD_N: %u ACTIVE, %u NACKS, %u TOTAL\n", active_len, nack_len, total_users);
-    // TODO: Actually implement that algorithm...
-    test(keys, active_len, nack_len, skew, CMPH_CHD_PH_N);
+    // Test
+    printf("NackHash: %u ACTIVE, %u NACKS, %u TOTAL\n\n", active_len, nack_len, total_users);
+    for(i=0; i<12; i++){
+        printf("Skew: %f \n", skew[i]);
+        test(keys, active_len, nack_len, skew[i]);
+    }
+    printf("\n");
+
+    // Benchmark Against CHD_PH
+    printf("CHD_PH Benchmark: %u\n", (active_len+nack_len));
+    test_no_nack(keys, active_len+nack_len);
 
     return 0;
 }

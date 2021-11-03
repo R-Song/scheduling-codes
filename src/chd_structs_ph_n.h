@@ -27,7 +27,7 @@ struct __chd_ph_n_config_data_t
 	cmph_uint8 *occup_table;     // table that indicates occupied positions
 
 	cmph_uint32 nack; // number of nacks
-	cmph_uint32 a; // skew factor	
+	double a; // skew factor	
 };
 #endif
 

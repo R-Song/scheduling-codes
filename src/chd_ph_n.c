@@ -364,6 +364,7 @@ chd_ph_sorted_list_t* chd_ph_n_ordering(chd_ph_bucket_t ** _buckets, chd_ph_item
 			{
 				output_items[position].f = input_items[position2].f;
 				output_items[position].h = input_items[position2].h;
+				output_items[position].nack = input_items[position2].nack;
 				position++;
 				position2++;
 			};
@@ -382,8 +383,7 @@ static inline cmph_uint8 place_bucket_probe(chd_ph_n_config_data_t *chd_ph, chd_
 	register cmph_uint32 i;
 	register chd_ph_item_t *item;
 	register cmph_uint32 position;
-
-    register cmph_uint32 hash_range = chd_ph->n + (cmph_uint32)(chd_ph->n * chd_ph->a) + 1;
+    cmph_uint32 hash_range = chd_ph->n + (cmph_uint32)(chd_ph->n * chd_ph->a);
 
 	item = items + buckets[bucket_num].items_list;
 	// try place bucket with probe_num
