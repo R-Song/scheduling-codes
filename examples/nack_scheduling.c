@@ -5,8 +5,8 @@
 
 #include <cmph.h>
 
-/* Test the nackhash */
-int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_len, double skew)
+
+int test_joint_schedule_and_nack(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_len, double skew)
 {
     cmph_t *hash;
     cmph_config_t *config;
@@ -41,7 +41,42 @@ int test(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_le
     return 0;
 }
 
-int test_no_nack(cmph_uint32* items_to_hash, cmph_uint32 items_len) {
+int test_nack(cmph_uint32* items_to_hash, cmph_uint32 active_len, cmph_uint32 nack_len, double skew)
+{
+    cmph_t *hash;
+    cmph_config_t *config;
+    cmph_io_adapter_t *source;
+    char filename[256];
+    FILE* mphf_fd = NULL;
+    cmph_uint32 items_len = active_len + nack_len;
+
+    // Wrap keys
+    source = cmph_io_struct_vector_adapter(
+        items_to_hash,
+        (cmph_uint32)sizeof(cmph_uint32),
+        0,
+        (cmph_uint32)sizeof(cmph_uint32),
+        items_len
+    );
+
+    // Set up config
+    config = cmph_config_new(source);
+    cmph_config_set_algo(config, RANDOM_HASH);
+    cmph_config_set_graphsize(config, 0.99);
+    cmph_config_set_skew(config, skew);
+    cmph_config_set_nack(config, nack_len);
+    cmph_config_set_verbosity(config, 0);
+
+    // Create perfect hash
+    hash = cmph_new(config);
+    cmph_config_destroy(config);
+    printf("Packed Size: %u bytes for %u keys\n",cmph_packed_size(hash), items_len);
+    cmph_io_vector_adapter_destroy(source);   
+    cmph_destroy(hash);
+    return 0;
+}
+
+int test_schedule(cmph_uint32* items_to_hash, cmph_uint32 items_len) {
     cmph_t *hash;
     cmph_config_t *config;
     cmph_io_adapter_t *source;
@@ -91,17 +126,22 @@ int main (void)
         T[keys[i]] = 1;
     }
 
-    // Test
-    printf("NackHash: %u ACTIVE, %u NACKS, %u TOTAL\n\n", active_len, nack_len, total_users);
-    for(i=0; i<12; i++){
-        printf("Skew: %f \n", skew[i]);
-        test(keys, active_len, nack_len, skew[i]);
-    }
-    printf("\n");
+    // Test joint schedule and nack
+    printf("Joint Schedule Nack: %u ACTIVE, %u NACKS, %u TOTAL\n\n", active_len, nack_len, total_users);
+    float skew_factor = 1;
+    test_joint_schedule_and_nack(keys, active_len, nack_len, skew_factor);
+    printf("\n\n");
+
+    // Test schedule followed by nack
+    printf("Schedule then Nack: %u ACTIVE, %u NACKS, %u TOTAL\n\n", active_len, nack_len, total_users);
+    test_nack(keys, active_len, nack_len, 1);
+    test_schedule(keys, active_len);
+    printf("\n\n"); 
 
     // Benchmark Against CHD_PH
     printf("CHD_PH Benchmark: %u\n", (active_len+nack_len));
-    test_no_nack(keys, active_len+nack_len);
+    test_schedule(keys, active_len+nack_len);
+    printf("\n\n");
 
     return 0;
 }

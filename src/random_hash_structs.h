@@ -1,10 +1,10 @@
-#ifndef __CMPH_CHD_PH_N_STRUCTS_H__
-#define __CMPH_CHD_PH_N_STRUCTS_H__
+#ifndef __RANDOM_HASH_STRUCTS_H__
+#define __RANDOM_HASH_STRUCTS_H__
 
 #include "hash_state.h"
 #include "compressed_seq.h"
 
-struct __chd_ph_n_data_t
+struct __random_hash_data_t
 {
 	compressed_seq_t * cs;	// compressed displacement values
 	cmph_uint32 nbuckets;	// number of buckets
@@ -12,7 +12,7 @@ struct __chd_ph_n_data_t
 	hash_state_t *hl;	// linear hash function
 };
 
-struct __chd_ph_n_config_data_t
+struct __random_hash_config_data_t
 {
 	CMPH_HASH hashfunc;	// linear hash function to be used
 	compressed_seq_t * cs;	// compressed displacement values
@@ -28,8 +28,7 @@ struct __chd_ph_n_config_data_t
 	
 	/* NACKHASH CODE BEGIN */
 	cmph_uint32 nack; // number of nacks
-	double a; // skew factor, skew_factor * output_bins is the amount of additional hashing range to help with NACK
+	double a; // skew factor
 	/* NACKHASH CODE END */	
 };
 #endif
-

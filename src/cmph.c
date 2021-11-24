@@ -10,6 +10,7 @@
 #include "chd_ph.h"
 #include "chd.h"
 #include "chd_ph_n.h"
+#include "random_hash.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -341,6 +342,9 @@ void cmph_config_set_algo(cmph_config_t *mph, CMPH_ALGO algo)
 			case CMPH_CHD_PH_N:
 				chd_ph_n_config_destroy(mph);
 				break;
+			case RANDOM_HASH:
+				random_hash_config_destroy(mph);
+				break;
 			default:
 				assert(0);
 		}
@@ -375,6 +379,9 @@ void cmph_config_set_algo(cmph_config_t *mph, CMPH_ALGO algo)
 				break;
 			case CMPH_CHD_PH_N:
 				mph->data = chd_ph_n_config_new();
+				break;
+			case RANDOM_HASH:
+				mph->data = random_hash_config_new();
 				break;
 			default:
 				assert(0);
@@ -422,6 +429,10 @@ void cmph_config_set_b(cmph_config_t *mph, cmph_uint32 b)
 	{
 		chd_ph_n_config_set_b(mph, b);
 	}
+	else if (mph->algo == RANDOM_HASH)
+	{
+		random_hash_config_set_b(mph, b);
+	}
 }
 
 void cmph_config_set_keys_per_bin(cmph_config_t *mph, cmph_uint32 keys_per_bin)
@@ -437,6 +448,10 @@ void cmph_config_set_keys_per_bin(cmph_config_t *mph, cmph_uint32 keys_per_bin)
 	else if (mph->algo == CMPH_CHD_PH_N)
 	{
 		chd_ph_n_config_set_keys_per_bin(mph, keys_per_bin);
+	}
+	else if (mph->algo == RANDOM_HASH)
+	{
+		random_hash_config_set_keys_per_bin(mph, keys_per_bin);
 	}
 }
 
@@ -485,6 +500,9 @@ void cmph_config_destroy(cmph_config_t *mph)
 			case CMPH_CHD_PH_N:
 				chd_ph_n_config_destroy(mph);
 				break;
+			case RANDOM_HASH:
+				random_hash_config_destroy(mph);
+				break;
 			default:
 				assert(0);
 		}
@@ -530,6 +548,9 @@ void cmph_config_set_hashfuncs(cmph_config_t *mph, CMPH_HASH *hashfuncs)
 			break;
 		case CMPH_CHD_PH_N:
 			chd_ph_n_config_set_hashfuncs(mph, hashfuncs);
+			break;
+		case RANDOM_HASH:
+			random_hash_config_set_hashfuncs(mph, hashfuncs);
 			break;
 		default:
 			break;
@@ -606,6 +627,10 @@ cmph_t *cmph_new(cmph_config_t *mph)
 			DEBUGP("Creating chd_ph_n hash\n");
 			mphf = chd_ph_n_new(mph, c, a);
 			break;
+		case RANDOM_HASH:
+			DEBUGP("Creating random hash\n");
+			mphf = random_hash_new(mph, c, a);
+			break;
 		default:
 			assert(0);
 	}
@@ -636,6 +661,8 @@ int cmph_dump(cmph_t *mphf, FILE *f)
 			return chd_dump(mphf, f);
 		case CMPH_CHD_PH_N:
 			return chd_ph_n_dump(mphf, f);
+		case RANDOM_HASH:
+			return random_hash_dump(mphf, f);
 		default:
 			assert(0);
 	}
@@ -691,6 +718,10 @@ cmph_t *cmph_load(FILE *f)
 			DEBUGP("Loading chd_ph_n algorithm dependent parts\n");
 			chd_load(f, mphf);
 			break;
+		case RANDOM_HASH:
+			DEBUGP("Loading random_hash algorithm dependent parts\n");
+			chd_load(f, mphf);
+			break;
 		default:
 			assert(0);
 	}
@@ -733,6 +764,9 @@ cmph_uint32 cmph_search(cmph_t *mphf, const char *key, cmph_uint32 keylen)
 		case CMPH_CHD_PH_N: 
 		        DEBUGP("chd_ph_n algorithm search\n");
 		        return chd_ph_n_search(mphf, key, keylen);
+		case RANDOM_HASH: 
+		        DEBUGP("random hash algorithm search\n");
+		        return random_hash_search(mphf, key, keylen);
 		default:
 			assert(0);
 	}
@@ -778,6 +812,9 @@ void cmph_destroy(cmph_t *mphf)
 			return;
 		case CMPH_CHD_PH_N:
 			chd_ph_n_destroy(mphf);
+			return;
+		case RANDOM_HASH:
+			random_hash_destroy(mphf);
 			return;
 		default:
 			assert(0);
@@ -830,6 +867,9 @@ void cmph_pack(cmph_t *mphf, void *packed_mphf)
 		case CMPH_CHD_PH_N:
 			chd_ph_n_pack(mphf, ptr);
 			break;
+		case RANDOM_HASH:
+			random_hash_pack(mphf, ptr);
+			break;
 		default:
 			assert(0);
 	}
@@ -865,6 +905,8 @@ cmph_uint32 cmph_packed_size(cmph_t *mphf)
 			return chd_packed_size(mphf);
 		case CMPH_CHD_PH_N:
 			return chd_ph_n_packed_size(mphf);
+		case RANDOM_HASH:
+			return random_hash_packed_size(mphf);
 		default:
 			assert(0);
 	}
@@ -904,6 +946,8 @@ cmph_uint32 cmph_search_packed(void *packed_mphf, const char *key, cmph_uint32 k
 			return chd_search_packed(++ptr, key, keylen);
 		case CMPH_CHD_PH_N:
 			return chd_ph_n_search_packed(++ptr, key, keylen);
+		case RANDOM_HASH:
+			return random_hash_search_packed(++ptr, key, keylen);
 		default:
 			assert(0);
 	}

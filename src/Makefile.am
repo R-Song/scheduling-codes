@@ -27,7 +27,8 @@ libcmph_la_SOURCES =  hash.h hash.c \
               linear_string_map.h linear_string_map.c \
 		      cmph_benchmark.h cmph_benchmark.c \
 		      cmph_time.h \
-			  chd_ph_n.h chd_ph_n.c chd_structs_ph_n.h
+			  chd_ph_n.h chd_ph_n.c chd_structs_ph_n.h \
+			  random_hash.h random_hash.c random_hash_structs.h
 
 libcmph_la_LDFLAGS = -version-info 0:0:0
 
